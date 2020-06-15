@@ -22,21 +22,7 @@
       prof1: "{{ prof.split(':') }}"
     when: profilename.stdout is search(":")      
   
-  - name: creating file
+  - name: remove flag
     file:
-      path: "{{ item  }}"
-      state: touch
-    with_items:
-      - /tmp/maintenance-deployment-running.{{ prof }}
-      - /tmp/maintenance-svc.{{ prof1.0 }}
-      - /tmp/maintenance-svc.{{ prof1.1 }}
-    when: profilename.stdout is search(":")
-    
-  - name: creating file2
-    file:
-      path: "{{ item }}"
-      state: touch
-    with_items:
-      - /tmp/maintenance-deployment-running.{{ prof }}
-      - /tmp/maintenance-svc.{{ prof }}
-    when: profilename2.stdout is not search(":")
+      path: /tmp/maintenance-deployment-running.{{ prof }}
+      state: absent
