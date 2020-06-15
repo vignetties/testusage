@@ -7,7 +7,7 @@
     command: echo "FSW_PRIMARY:FSW_SECONDARY"
     register: profilename
     
-   - name: mapping profilename
+  - name: mapping profilename
     command: echo "FSW_SECONDARY"
     register: profilename2
     
