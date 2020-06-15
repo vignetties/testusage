@@ -1,6 +1,6 @@
 
 ---
-- name: "Testing services"
+- name: "Testing services added"
   hosts: sla15518.srv.allianz
   
   tasks:
