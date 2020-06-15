@@ -1,0 +1,29 @@
+---
+- name: "Testing services"
+  hosts: sla15518.srv.allianz
+  
+  tasks:
+  - name: mapping profilename
+    command: echo "FSW_PRIMARY:FSW_SECONDARY"
+    register: profilename
+    
+   - name: mapping profilename
+    command: echo "FSW_SECONDARY"
+    register: profilename2
+    
+  - name: setting fact
+    set_fact: 
+      prof={{ profilename.stdout|trim }}
+    set_fact:
+      prof1: "{{ prof.split(':') }}"
+    file:
+      path: "/tmp/maintenance-cmon.{{ prof1.0 }}"
+      path: "/tmp/maintenance-cmon.{{ prof1.1 }}"
+      path: "/tmp/maintenance-deployment-running.{{ profilename.stdout|trim }}"
+      state: touch
+    when: profilename.stdout is search(":")
+    
+  - name: print output
+    debug:
+      msg: "profilename  is: {{ profilename2|trim }}"
+    when: profilename2.stdout is not search(":")
