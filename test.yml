@@ -1,7 +1,7 @@
 
 ---
 - name: "Testing services added"
-  hosts: sla15518.srv.allianz
+  hosts: localhost
   
   tasks:
   - name: mapping profilename
