@@ -1,3 +1,4 @@
+
 ---
 - name: "Testing services"
   hosts: sla15518.srv.allianz
@@ -16,6 +17,8 @@
       prof={{ profilename.stdout|trim }}
     set_fact:
       prof1: "{{ prof.split(':') }}"
+      
+  - name: creating file
     file:
       path: "/tmp/maintenance-cmon.{{ prof1.0 }}"
       path: "/tmp/maintenance-cmon.{{ prof1.1 }}"
