@@ -31,6 +31,8 @@ def main():
         flag = ["FSW_PRIMARY", "FSW_SECONDARY"]
     elif application == "GGI_TIP":
         flag = ["TIP"]
+    elif application == "CISL_SEARCH_PROPERTIES":
+        flag = ["CISL_SEARCH_BENEFICIARY"]
 
     if state == 'present':
        # create flag
