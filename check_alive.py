@@ -587,7 +587,8 @@ class Check_Alive:
         
     def check_ansiblemaintenance(self):
         self.show_trace()
-        if glob.glob("/tmp/maintenance-deployment-running.*"):
+        flagname = "maintenance-deployment-running.{}".format(self.args.profile)
+        if os.path.isfile(os.path.join('/tmp/',flagname)):
             LOGGER.info(7)
             self.end_timeout()
             exit()
