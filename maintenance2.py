@@ -40,11 +40,13 @@ def main():
         for i in filename:
             for j in flag:
                 flagname = "{}{}".format(i,j)
-                open(flagname, "x")       
+                if not os.path.exists(flagname):
+                    open(flagname, "x")       
     elif state == 'absent':
         for x in flag:
             flagname = "{}{}".format(filename[1],x)
-            os.remove(flagname)
+            if os.path.exists(flagname):
+                os.remove(flagname)
        
 
     result = {"changed": 1, "rc": 0}
