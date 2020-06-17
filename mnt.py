@@ -3,6 +3,7 @@
 from ansible.module_utils.basic import *
 import requests
 import sys
+import os
 
 
 def main():
@@ -33,8 +34,19 @@ def main():
 
     if state == 'present':
        # create flag
+       flagname = "/tmp/maintenance-deployment-running." + ''.join(flag)
+       if not os.path.exists(flagname):
+         open(flagname, "x")
+       for i in flag:
+         flagname = "/tmp/maintenance-svc." + i
+         if not os.path.exists(flagname):
+           open(flagname, "x")         
     elif state == 'absent':
        # remove flag
+       flagname = "/tmp/maintenance-deployment-running." + ''.join(flag)
+       if os.path.exists(flagname):
+         os.remove(flagname)
+       
 
     result = {"changed": 1, "rc": 0}
     module.exit_json(**result)
