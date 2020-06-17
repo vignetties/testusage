@@ -1,0 +1,14 @@
+import os
+
+#"x" - Create - will create a file, returns an error if the file exist
+
+#open("/tmp/noargmyfile.txt", "x")
+
+prof = [ "primary" , "secondary"]
+#filename = [ "/tmp/maintenance-svc.", "/tmp/maintenance-deployment-running." ]
+filename = [ "/tmp/maintenance-deployment-running." ]
+for i in filename:
+    for j in prof:
+        flagname = "{}{}".format(i,j)
+        #open(flagname, "x")
+        os.remove(flagname)
