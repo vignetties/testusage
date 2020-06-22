@@ -25,7 +25,6 @@ import collections
 import inspect
 import threading
 import io
-import glob
 from xml.dom import minidom
 from argparse import ArgumentParser, RawTextHelpFormatter
 import potato.services
@@ -447,7 +446,7 @@ class Check_Alive:
     def format_soap(self, resp):
         #
         # TODO
-        # * test with bad status
+        # * . with bad status
         #
         self.show_trace()
         try:
@@ -536,10 +535,14 @@ class Check_Alive:
             LOGGER.info(0)
         elif status and not self.maintenance:
             LOGGER.info(1)
-        elif status and self.maintenance:
-            LOGGER.info(2)
-        elif not status and self.maintenance:
-            LOGGER.info(3)
+        elif not status and self.maintenance == "svc": #app up and svc flag set
+            LOGGER.info(16)
+        elif status and self.maintenance == "svc": # app down and svc flag set
+            LOGGER.info(15)
+        elif not status and self.maintenance == "cmon": #app up and cmon flag set
+            LOGGER.info(14)
+        elif status and self.maintenance == "cmon": # app down and cmon flag set
+            LOGGER.info(13)
             
         self.end_timeout()
                          
