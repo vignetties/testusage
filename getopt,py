@@ -8,6 +8,7 @@ def full_name():
 
 	try: 
 		opts, args = getopt.getopt(argv, "p:", ["profile="]) 
+		#opts, args = getopt.getopt(argv, "ofcugp:ntr",["option", "fqdn", "config", "url", "gfbid", "profile=", "notation", "timeout", "trace"])
 	
 	except: 
 		print("Error") 
