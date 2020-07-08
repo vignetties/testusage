@@ -1,3 +1,15 @@
+from __future__ import (absolute_import, division, print_function)
+
+__metaclass__ = type
+
+import os
+import smtplib
+import json
+from datetime import datetime
+from ansible.module_utils._text import to_bytes
+from ansible.plugins.callback import CallbackBase
+
+
 def v2_playbook_on_play_start(self, play):
     var_mgr = play.get_variable_manager()
     self.play = play
