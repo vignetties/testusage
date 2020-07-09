@@ -1,27 +1,63 @@
-from __future__ import (absolute_import, division, print_function)
+---
+- name: "Load allianz.server.conf"
+  read_allianz_server_conf:
+  register: server_conf
 
-__metaclass__ = type
+- name: Create a new host or update an existing host's info
+  local_action:
+    module: zabbix_tag
+    server_url: "{{ zabbix_server }}"
+    login_user: tu_ansible
+    login_password: pwd4ansible
+    host_name: "{{inventory_hostname |replace ('.srv.allianz', '')}}"
+    stage: "{{server_conf.content.STAGE}}"
+    mandant: "{{server_conf.content.MANDANT}}"
+    servertype: "{{server_conf.content.SERVERTYPE}}"
+    jbossprofiles: "{{server_conf.content.JBOSSPROFILES | default('')}}"
+    tomcatprofiles: "{{server_conf.content.TOMCATPROFILES| default('')}}"
+    asifportoffsets: "{{server_conf.content.ASIF_PORTOFFSETS| default('')}}"
 
-import os
-import smtplib
-import json
-from datetime import datetime
-from ansible.module_utils._text import to_bytes
-from ansible.plugins.callback import CallbackBase
+#- name: Update zabbix configuration
+#  cron:
+#    name: "update zabbix configuration"
+#    minute: "*/15"
+#    job: "cd /etc/zabbix; if ! git diff --quiet remotes/origin/HEAD; then git pull; service zabbix-agent restart; fi"
 
+- name: "Update git repo"
+  shell: cd /etc/zabbix && git fetch origin && git reset --hard origin/master && git checkout master && git pull
+  environment:
+    http_proxy: http://fr003-e2-svr.zone2.proxy.allianz:8090
+    https_proxy: http://fr003-e2-svr.zone2.proxy.allianz:8090
+  become: true
 
-def v2_playbook_on_play_start(self, play):
-    var_mgr = play.get_variable_manager()
-    self.play = play
-    self.extra_vars = var_mgr.extra_vars
-    self.results.append(self._new_play(play))
+- name: "Re-create zabbix_agentd.conf"
+  become: true
+  template: 
+    src: ../../zabbix/templates/zabbix_agentd.conf.j2 
+    dest: /etc/zabbix/zabbix_agentd.conf
+    mode: 644
 
-def v2_playbook_on_stats(self, stats):
-    sendmail(self, stats)
+- stat:
+    path: /usr/lib/systemd/system/zabbix-agent.service
+  register: service_file
 
-def v2_playbook_on_task_start(self, task, is_conditional):
-    self.results[-1]['tasks'].append(self._new_task(task))
+- name: install customized zabbix-agent systemd unit file
+  template:
+    src: ../../zabbix/templates/zabbix-agent-systemd.service
+    dest: /usr/lib/systemd/system/zabbix-agent.service
+    mode: 644
+  when: service_file.stat.exists
 
-def v2_runner_on_ok(self, result, **kwargs):
-    host = result._host
-    self.results[-1]['tasks'][-1]['hosts'][host.name] = result._result
+- name: start zabbix-agent
+  systemd:
+    state: started
+    name: zabbix-agent 
+    daemon_reload: yes
+  when: service_file.stat.exists
+
+- name: restart zabbix-agent
+  service:
+    name: zabbix-agent
+    state: restarted
+    enabled: true
+  become: true
