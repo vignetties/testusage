@@ -1,0 +1,6 @@
+  - name: rename files
+    command: mv {{ item }} {{ item }}.bak2
+    with_items:
+    - /etc/opt/allianz/certs/centos7_master.key
+    - /etc/opt/allianz/certs/centos7_master.pem
+    - /etc/opt/allianz/certs/aga-eu.jks
