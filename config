@@ -1,0 +1,13 @@
+LOAD DATABASE
+FROM mysql://zabbix:zabbix@localhost/zabbix
+INTO postgresql://zabbix:zabbix@127.0.0.1/zabbix
+WITH include no drop,
+truncate,
+create no tables,
+create no indexes,
+no foreign keys,
+reset sequences,
+data only
+SET maintenance_work_mem TO '1024MB', work_mem to '512MB'
+EXCLUDING TABLE NAMES MATCHING ~/history.*/, ~/trend.*/
+ALTER SCHEMA 'zabbix' RENAME TO 'public';
